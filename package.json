@@ -1,6 +1,6 @@
 {
   "name": "find-dir-path",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Find a directory by walking up parent directories",
   "repository": {
     "url": "zcong1993/find-dir-path",
