@@ -1,6 +1,10 @@
 # find-dir-path
 
-[![NPM version](https://img.shields.io/npm/v/find-dir-path.svg?style=flat)](https://npmjs.com/package/find-dir-path) [![NPM downloads](https://img.shields.io/npm/dm/find-dir-path.svg?style=flat)](https://npmjs.com/package/find-dir-path) [![Build Status](https://img.shields.io/circleci/project/zcong1993/find-dir-path/master.svg?style=flat)](https://circleci.com/gh/zcong1993/find-dir-path) [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/zcong1993/donate)
+[![NPM version](https://img.shields.io/npm/v/find-dir-path.svg?style=flat)](https://npmjs.com/package/find-dir-path) [![NPM downloads](https://img.shields.io/npm/dm/find-dir-path.svg?style=flat)](https://npmjs.com/package/find-dir-path) [![Build Status](https://img.shields.io/circleci/project/zcong1993/find-dir-path/master.svg?style=flat)](https://circleci.com/gh/zcong1993/find-dir-path)
+
+> Find a directory by walking up parent directories
+
+> based on [sindresorhus/find-up](https://github.com/sindresorhus/find-up), project template [egoist/template-nm](https://github.com/egoist/template-nm)
 
 ## Install
 
@@ -10,12 +14,47 @@ yarn add find-dir-path
 
 ## Usage
 
+```
+/
+└── Users
+        └── zcong1993
+                ├── unicorn.png
+                └── foo
+                        └── bar
+                        └── foo(file) ├── baz
+                                      └── example.js
+```
+
 ```js
+// example.js
 const findDirPath = require('find-dir-path')
 
-findDirPath()
-//=> foo
+findDirPath('foo')
+  .then(path => {
+    console.log(path)
+    //=> '/Users/zcong1993/'
+  })
+
+findDirPath.sync('foo')
+//=> '/Users/zcong1993/'
 ```
+
+## API
+
+### findDirPath(name, [options])
+Returns a Promise for either the dirpath or null if it could be found.
+### findDirPath.sync(name, [options])
+Returns the first filepath found (by respecting the order) or null.
+#### name
+Type: `string`
+
+Name of the directory to find.
+#### options
+##### cwd
+Type: `string`<br>
+Default: `process.cwd()`
+
+Directory to start from.
 
 ## Contributing
 
