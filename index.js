@@ -8,7 +8,7 @@ function isDir(tmp) {
       if (err) {
         return reject(err)
       }
-      return resolve(stats.isDirectory() ? tmp : false)
+      return resolve(stats.isDirectory())
     })
   })
 }
@@ -17,23 +17,32 @@ function isDirSync(tmp) {
   return fs.statSync(tmp).isDirectory()
 }
 
-module.exports = (dirname, opts = {}) => {
-  return findUp(dirname, opts)
-    .then(fp => {
-      if (fp) {
-        return isDir(fp)
-      }
-      return null
-    })
-    .then(fp => {
-      if (fp) {
-        return path.dirname(fp)
-      }
-      return null
-    })
+module.exports = async function findDir(dirname, opts = {}) {
+  const root = path.parse(dirname).root
+  const fp = await findUp(dirname, opts)
+  if (!fp) {
+    return null
+  }
+  const _isDir = await isDir(fp)
+  if (_isDir) {
+    return path.dirname(fp)
+  } else if (path.dirname(fp) !== root) {
+    return findDir(dirname, {cwd: path.dirname(path.dirname(fp))})
+  }
+  return null
 }
 
 module.exports.sync = (dirname, opts = {}) => {
+  const root = path.parse(dirname).root
   const fp = findUp.sync(dirname, opts)
-  return isDirSync(fp) ? path.dirname(fp) : null
+
+  if (fp) {
+    if (isDirSync(fp)) {
+      return path.dirname(fp)
+    } else if (path.dirname(fp) !== root) {
+      return module.exports.sync(dirname, {cwd: path.dirname(path.dirname(fp))})
+    }
+    return null
+  }
+  return null
 }
